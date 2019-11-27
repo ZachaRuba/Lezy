@@ -1,17 +1,12 @@
 import React, { Component } from "react"
 
-
-
-import Firebase from 'firebase';
-import config from './../../controllers/firebase-admin/config.js';
+import { withFirebase } from '../Firebase';
 
 
 class Counter extends Component {
   constructor(props){
     super(props);
     
-    Firebase.initializeApp(config);
-
     this.state = {
       constructive_count: 0,
       destructive_count: 0
@@ -49,13 +44,14 @@ class Counter extends Component {
   }
   
   writeData = () => {
-    Firebase.database().ref('/').set(this.state);
+    const { firebase } = this.props;
+    firebase.count().set(this.state);
     console.log("Saving...");
   }
 
   readData = () => {
-    let ref = Firebase.database().ref('/');
-    ref.on('value', database => {this.setState(database.val())});
+    const { firebase } = this.props;
+    firebase.count().on('value', database => {this.setState(database.val())});
     console.log("Reading....");
   }
 
@@ -75,5 +71,5 @@ class Counter extends Component {
   }
 }
 
-export default Counter;
+export default withFirebase(Counter);
 
